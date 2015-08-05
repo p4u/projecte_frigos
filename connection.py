@@ -32,6 +32,7 @@ class Server():
         self.conn.setblocking(1)
         self.conn.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.conn.bind((self.host, self.port))
+        self.current_conn = None
 
     def listen(self):
         print('waiting for new connections on %s:%s' %
@@ -49,8 +50,7 @@ class Server():
         return data
 
     def send(self, msg):
-        data = self.current_conn.recv(1024).decode()
-        return data
+        return self.current_conn.sendall(msg.encode())
 
     def close(self):
         self.conn.shutdown(2)

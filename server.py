@@ -19,14 +19,17 @@ class Service(object):
         self.socket.setblocking(1)
 
     def analyze(self,data):
-        data_colon = data.split(":")
-        id = data_colon[0].strip()
-        data_coma = data_colon[1].split(",")
-        current = data_coma[0].strip()
-        temp1 = data_coma[1].strip()
-        temp2 = data_coma[2].strip()
-        potential = data_coma[3].strip()
-        print("ID=%s I=%s T1=%s T2=%s V=%s" %(id,current,temp1,temp2,potential))
+        try:
+            data_colon = data.split(":")
+            id = data_colon[0].strip()
+            data_coma = data_colon[1].split(",")
+            current = data_coma[0].strip()
+            temp1 = data_coma[1].strip()
+            temp2 = data_coma[2].strip()
+            potential = data_coma[3].strip()
+            print("ID=%s I=%s T1=%s T2=%s V=%s" %(id,current,temp1,temp2,potential))
+        except:
+            print("Cannot understand: %s" %data)
 
 
     def start(self):
