@@ -1,8 +1,10 @@
+#!/usr/bin/env python2.7
 import sys
 import connection as CN
 import serial
 import os
 import time
+import argparse
 
 host = "127.0.0.1"
 port=7645
@@ -10,19 +12,40 @@ serial_device_basename = "/dev/ttyACM"
 serial_device_init = 3
 baudrate = 9600
 
-def open_serial():
+def parse_args():
+  parser = argparse.ArgumentParser(
+      description='Trastos monitor')
+  parser.add_argument(
+      '-d',
+      dest='serial_device',
+      type=str,
+      default=None,
+      help='Serial device')
+  parser.add_argument(
+      '-i',
+      dest='recolector_id',
+      type=int,
+      default=0,
+      help='Recolector identifier')
+  return parser.parse_args()
+
+def open_serial(device):
     #serial.tools.list_ports
-    serial_device = False
-    for i in range(serial_device_init,8):
-        try: 
-            os.stat(serial_device_basename+str(i))
-            serial_device = serial_device_basename+str(i)
-            break
-        except FileNotFoundError:
-            pass
-    if not serial_device:
-        print("Error, cannot find a valid serial device")
-        sys.exit(2)
+    if device == None:
+      serial_device = False
+      for i in range(serial_device_init,8):
+          try: 
+              os.stat(serial_device_basename+str(i))
+              serial_device = serial_device_basename+str(i)
+              break
+          except Exception as e:
+              print(e)
+              pass
+
+      if not serial_device:
+          print("Error, cannot find a valid serial device.")
+          sys.exit(2)
+    else: serial_device = device
     print("Opening serial device " + serial_device)
     return serial.Serial(serial_device, baudrate, timeout=0)
 
@@ -36,7 +59,10 @@ def connect():
     socket.connect()
     return socket
 
-serial_con = open_serial()
+args = parse_args()
+recolector_id = args.recolector_id
+serial_con = open_serial(args.serial_device)
+
 try:
     client = connect()
 except ConnectionRefusedError:
@@ -44,7 +70,7 @@ except ConnectionRefusedError:
     sys.exit(2)
 
 while True:
-    data = read(serial_con)
+    data = str(recolector_id)+":"+read(serial_con)
     print(data)
     client.send(data.encode())
     time.sleep(0.2)
