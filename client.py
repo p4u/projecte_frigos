@@ -6,11 +6,8 @@ import os
 import time
 import argparse
 
-host = "127.0.0.1"
-port=7645
 serial_device_basename = "/dev/ttyACM"
 serial_device_init = 3
-baudrate = 9600
 
 def parse_args():
   parser = argparse.ArgumentParser(
@@ -24,9 +21,27 @@ def parse_args():
   parser.add_argument(
       '-i',
       dest='recolector_id',
-      type=int,
+      type=str,
       default=0,
       help='Recolector identifier')
+  parser.add_argument(
+      '-s',
+      dest='host',
+      default='127.0.0.1',
+      type=str,
+      help='Server host or IP')
+  parser.add_argument(
+      '-p',
+      dest='port',
+      type=int,
+      default=7645,
+      help='Server port')
+  parser.add_argument(
+      '-b',
+      dest='baudrate',
+      type=int,
+      default=9600,
+      help='Baudrate for the serial device')
   return parser.parse_args()
 
 def open_serial(device):
@@ -61,6 +76,9 @@ def connect():
 
 args = parse_args()
 recolector_id = args.recolector_id
+baudrate = args.baudrate
+port = args.port
+host = args.host
 serial_con = open_serial(args.serial_device)
 
 try:
