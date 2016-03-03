@@ -70,7 +70,7 @@ except ConnectionRefusedError:
     sys.exit(2)
 
 while True:
-    data = str(recolector_id)+":"+read(serial_con)
+    data = str(recolector_id)+","+read(serial_con)
     print(data)
     client.send(data.encode())
     time.sleep(0.2)
