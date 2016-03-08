@@ -74,6 +74,11 @@ def connect():
     socket.connect()
     return socket
 
+def send_id_info():
+    data = "RECOLECTOR_ID:%s\n" %(recolector_id)
+    client.send(data.encode())
+    time.sleep(0.2)
+
 args = parse_args()
 recolector_id = args.recolector_id
 baudrate = args.baudrate
@@ -87,8 +92,9 @@ except ConnectionRefusedError:
     print("Cannot connect to server")
     sys.exit(2)
 
+send_id_info()
 while True:
-    data = str(recolector_id)+","+read(serial_con)
+    data = read(serial_con)
     print(data)
     client.send(data.encode())
     time.sleep(0.2)
