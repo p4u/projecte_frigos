@@ -19,6 +19,7 @@ class Service(object):
         self.socket.setblocking(1)
         self.db = database.database()
         self.debug = True
+        self.rec_id = None
 
     def _check_recolector_exist(self,id,create=True):
       if self.db.select("count(*) FROM Recolector WHERE ID='%s'" %(id))[0][0] == 0:
@@ -49,15 +50,18 @@ class Service(object):
     def analyze(self,data):
         try:
             data_colon = data.split(":")
-            rec_id = data_colon[0].split(",")[0].strip()
-            id = data_colon[1].split(",")[1].strip()
-            data_coma = data_colon[1].split(",")
-            current = float(data_coma[0].strip())
-            temp1 = float(data_coma[1].strip())
-            temp2 = float(data_coma[2].strip())
-            potential = float(data_coma[3].strip())
-            #print("ID=%s I=%s T1=%s T2=%s V=%s" %(id,current,temp1,temp2,potential))
-            self._insert_data_frigo(rec_id,id,current,temp1,temp2,potential)
+            id = data_colon[0].strip()
+            if id == "RECOLECTOR_ID":
+              self.rec_id = data_colon[1].strip()
+              print("Received recolector ID: %s" %(self.rec_id))
+            else:
+              data_coma = data_colon[1].split(",")
+              current = float(data_coma[0].strip())
+              temp1 = float(data_coma[1].strip())
+              temp2 = float(data_coma[2].strip())
+              potential = float(data_coma[3].strip())
+              #print("ID=%s I=%s T1=%s T2=%s V=%s" %(id,current,temp1,temp2,potential))
+              self._insert_data_frigo(self.rec_id,id,current,temp1,temp2,potential)
         except Exception as e:
             print("Cannot understand: %s" %data)
             print(e)
