@@ -5,6 +5,7 @@ class database(object):
     config = {}
     execfile("config.py",config)
     self.db = MySQLdb.connect(config["host"],config["user"],config["password"],config["database"])
+    self.db.autocommit(True)
 
   def insert(self,txt):
     dbc = self.db.cursor()
