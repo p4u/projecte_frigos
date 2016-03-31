@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <script language="javascript" type="text/javascript" src="/static/js/flot/jquery.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/js/flot/jquery.flot.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/js/flot/jquery.flot.time.js"></script>
+  </head>
+  <body>
+    <h1>Gràfic en temps real per {{device}}</h1>
+    <script language="javascript" type="text/javascript"> 
+      $(document).ready(function(){
+          var dataurl = "/data/intensity_rt/{{device}}" ;
+
+          var options = {
+                lines: { show: true },
+                points: { show: true },
+                series: { shadowSize: 0 },
+                xaxis: { mode: "time", timezone: "browser" },
+                colors: [ "rgba(255,0,0,1)"]
+          };
+              
+          var data = [];
+          var graph = $.plot("#placeholder", [data],options);
+
+          function onData(series) {
+              //Keep the last uniq 10 results
+              var already_add = [];
+              data.forEach(function(e) { already_add.push(e[0]); });
+              series.data.forEach( function(e) {
+                if($.inArray(e[0], already_add) === -1) 
+                  data.push(e); 
+              });
+              data = data.slice(-30);
+              graph.setData([data]);
+              graph.setupGrid();
+              graph.draw();
+              }
+
+         function fetchData() {
+             $.ajax({
+                    url: dataurl,
+                    type: "GET",
+                    dataType: "json",
+                    success: onData
+            });
+          }
+          fetchData();
+          setInterval(fetchData, 5000);
+          });
+
+</script>       
+<div id="placeholder" style="width:600px;height:300px;"></div>
+
+</body>
+</html>
