@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <script language="javascript" type="text/javascript" src="/static/js/flot/jquery.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/js/flot/jquery.flot.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/js/flot/jquery.flot.time.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/js/flot/jquery.flot.selection.js"></script>
+  </head>
+  <body>
+    <h1>Power and Temperature Monitor</h1>
+    <script language="javascript" type="text/javascript">  
+      $(document).ready(function(){
+          $.getJSON("/data/all/{{device}}/{{points}}", function(data) {
+            var options = {
+              xaxis: { mode: "time", timezone: "browser" },
+              yaxes: [ 
+                { position: "left", tickFormatter: function(val, axis) { return val < axis.max ? val.toFixed(2) : "<b>Watts</b>";} }, 
+                { position: "right", tickFormatter: function(val, axis) { return val < axis.max ? val.toFixed(2) : "<b>Celsius</b>";} } ],
+              selection: { mode: "x" },
+              legend: { noColumns: 2 },
+              grid: { hoverable: true }
+            };
+
+            //succes - data loaded, now use plot:
+            var plotarea = $("#placeholder");
+
+            // Zoom
+            plotarea.bind("plotselected", function (event, ranges) {
+                $("#selection").text(ranges.xaxis.from.toFixed(1) + " to " + ranges.xaxis.to.toFixed(1));
+                $.each(plot.getXAxes(), function(_, axis) {
+                  var opts = axis.options;
+                  opts.min = ranges.xaxis.from;
+                  opts.max = ranges.xaxis.to;
+                });
+                plot.setupGrid();
+                plot.draw();
+                plot.clearSelection();
+            });
+
+            // Hover
+            $("<div id='tooltip'></div>").css({
+                position: "absolute",
+                display: "none",
+                border: "1px solid #fdd",
+                padding: "2px",
+                "background-color": "#fee",
+                opacity: 0.80
+                }).appendTo("body");
+
+            plotarea.bind("plothover", function (event, pos, item) {
+            if (item) {
+              var x = item.datapoint[0].toFixed(2),
+                  y = item.datapoint[1].toFixed(2);
+
+              $("#tooltip").html(y)
+                .css({top: item.pageY+5, left: item.pageX+5})
+                .fadeIn(200);
+            } else {
+              $("#tooltip").hide();
+              }
+            });  
+
+            // Data
+            data[0]["lines"] = {show: true, fill: false};
+//            data[0]["points"] = {show: true};
+            data[1]["lines"] = {show: true, fill: false};
+            data[1]["yaxis"] = 2;
+            data[2]["lines"] = {show: true, fill: false};
+            data[2]["yaxis"] = 2;
+
+            var plot = $.plot(plotarea,data,options);
+            
+            });
+          });
+
+</script>       
+<div id="placeholder" style="width:1024px;height:500px;"></div>
+
+</body>
+                                                                                                                                                                                                                                                      </html>
