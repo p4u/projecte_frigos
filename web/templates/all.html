@@ -1,13 +1,26 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
   <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    !-->
     <script language="javascript" type="text/javascript" src="/static/js/flot/jquery.js"></script>
     <script language="javascript" type="text/javascript" src="/static/js/flot/jquery.flot.js"></script>
     <script language="javascript" type="text/javascript" src="/static/js/flot/jquery.flot.time.js"></script>
     <script language="javascript" type="text/javascript" src="/static/js/flot/jquery.flot.selection.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/js/html2canvas.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/js/jspdf.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/js/addimage.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/js/png_support.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/js/png.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/js/zlib.js"></script>
+    <script language="javascript" type="text/javascript" src="/static/js/export.js"></script>
   </head>
   <body>
-    <h1>Power and Temperature Monitor</h1>
+    <div class="page-header">
+      <h1>Monitor d'electrodomèstics <small>Potència i temperatura</small></h1>
+    </div>
     <script language="javascript" type="text/javascript">  
       $(document).ready(function(){
           $.getJSON("/data/all/{{device}}/{{points}}", function(data) {
@@ -75,6 +88,6 @@
 
 </script>       
 <div id="placeholder" style="width:1024px;height:500px;"></div>
-
+<a id="generate">Genera PDF</a>
 </body>
-                                                                                                                                                                                                                                                      </html>
+</html>
