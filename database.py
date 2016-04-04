@@ -1,9 +1,11 @@
 import MySQLdb
 
+CONFIG_FILE="/var/www/monitor/config.py"
+
 class database(object):
   def __init__(self):
     config = {}
-    execfile("config.py",config)
+    execfile(CONFIG_FILE,config)
     self.db = MySQLdb.connect(config["host"],config["user"],config["password"],config["database"])
     self.db.autocommit(True)
 
