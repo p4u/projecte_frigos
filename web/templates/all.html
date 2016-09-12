@@ -25,14 +25,22 @@
       $(document).ready(function(){
           $.getJSON("/data/all/{{device}}/{{points}}", function(data) {
             var options = {
-              xaxis: { mode: "time", timezone: "browser" },
-              yaxes: [ 
+              xaxis: { mode: "time", 
+timezone: "browser",
+timeformat: "%a, %d/%b/%y %H:%M:%S",
+dayNames: ["du", "dl", "dm", "dc", "dj", "dv", "ds"],
+monthNames: ["gen", "feb", "mar", "abr", "mai", "jun", "jul", "ago", "set", "oct", "nov", "des"]
+ },
+             yaxes: [ 
                 { position: "left", tickFormatter: function(val, axis) { return val < axis.max ? val.toFixed(2) : "<b>Watts</b>";} }, 
                 { position: "right", tickFormatter: function(val, axis) { return val < axis.max ? val.toFixed(2) : "<b>Celsius</b>";} } ],
-              selection: { mode: "x" },
-              legend: { noColumns: 2 },
-              grid: { hoverable: true }
-            };
+                selection: { mode: "x" },
+                legend: { noColumns: 3,
+                backgroundColor: null,
+                backgroundOpacity: 0,
+                position: "nw" },
+                grid: { hoverable: true }
+             };
 
             //succes - data loaded, now use plot:
             var plotarea = $("#placeholder");
@@ -88,6 +96,6 @@
 
 </script>       
 <div id="placeholder" style="width:1024px;height:500px;"></div>
-<a id="generate">Genera PDF</a>
+<a id="generate">Captura imatge</a>
 </body>
 </html>
