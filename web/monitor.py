@@ -13,8 +13,11 @@ app = Flask(__name__)
 db = database.database()
 
 @app.route('/')
-def hello_world():
-  return 'Hello World!'
+def main():
+  devices = []
+  for i in db.select("id from Trasto"):
+    if len(i[0]) > 2 and str(i[0][0])=='F': devices.append(i[0])
+  return render_template('main.html',devices=devices)
 
 @app.route('/data/intensity/<trasto>')
 @app.route('/data/intensity/<trasto>/<points>')
