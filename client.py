@@ -5,9 +5,19 @@ import serial
 import os
 import time
 import argparse
+import logging
 
 serial_device_basename = "/dev/ttyACM"
-serial_device_init = 3
+serial_device_init = 0
+
+def set_log(logname):
+    logging.basicConfig(filename=logname,
+                            filemode='a',
+                            format='%(asctime)s,%(msecs)d %(message)s',
+                            datefmt='%d/%m/%y %H:%M:%S',
+                            level=logging.DEBUG)
+    global logger
+    logger = logging.getLogger("monitor")
 
 def parse_args():
   parser = argparse.ArgumentParser(
@@ -24,6 +34,12 @@ def parse_args():
       type=str,
       default=0,
       help='Recolector identifier')
+  parser.add_argument(
+      '-l',
+      dest='logname',
+      type=str,
+      default='/tmp/monitor.log',
+      help='Log file')
   parser.add_argument(
       '-s',
       dest='host',
@@ -59,9 +75,12 @@ def open_serial(device):
 
       if not serial_device:
           print("Error, cannot find a valid serial device.")
+          logger.error("Cannot find a valid serial device")
           sys.exit(2)
+
     else: serial_device = device
     print("Opening serial device " + serial_device)
+    logger.info("Opening serial device " + serial_device)
     return serial.Serial(serial_device, baudrate, timeout=0)
 
 def read(s):
@@ -80,6 +99,7 @@ def send_id_info():
     time.sleep(0.2)
 
 args = parse_args()
+set_log(args.logname)
 recolector_id = args.recolector_id
 baudrate = args.baudrate
 port = args.port
@@ -90,12 +110,13 @@ try:
     client = connect()
 except ConnectionRefusedError:
     print("Cannot connect to server")
+    logger.error("Cannot connect to server")
     sys.exit(2)
 
 send_id_info()
 while True:
     data = read(serial_con)
-    print(data)
+    logger.info("Send: " + data)
     client.send(data.encode())
     time.sleep(0.2)
 
